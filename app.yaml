@@ -11,6 +11,9 @@ handlers:
   static_dir: images
 - url: /fonts
   static_dir: fonts
+- url: /favicon.ico
+  static_files: favicon.ico
+  upload: favicon.ico
 - url: /.*
   script: templates.app
 
