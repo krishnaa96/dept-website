@@ -2633,6 +2633,7 @@ ul.browser-default li {
 
 ul li {
   list-style-type: none;
+  padding: 5px 0;
 }
 
 a {
@@ -4532,6 +4533,7 @@ small {
 .card {
   position: relative;
   margin: 0.5rem 0 1rem 0;
+  padding: 2rem;
   background-color: #fff;
   transition: box-shadow .25s;
   border-radius: 2px;
@@ -4660,7 +4662,8 @@ small {
 }
 
 .card .card-content {
-  padding: 20px;
+  padding-left: 30px;
+  padding-top: 10px;
   border-radius: 0 0 2px 2px;
 }
 

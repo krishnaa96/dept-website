@@ -25,51 +25,51 @@ class infraHandler(Handler):
 
 class UGHandler(Handler):
 	def get(self):
-		self.render("infra.html")
+		self.render("ug.html")
 
 class PGHandler(Handler):
 	def get(self):
-		self.render("infra.html")
+		self.render("pg.html")
 
 class partHandler(Handler):
 	def get(self):
-		self.render("infra.html")
+		self.render("part.html")
 
 class staffHandler(Handler):
 	def get(self):
-		self.render("infra.html")
+		self.render("staff.html")
 
 class nStaffHandler(Handler):
 	def get(self):
-		self.render("infra.html")
+		self.render("nstaff.html")
 
 class studentsHandler(Handler):
 	def get(self):
-		self.render("infra.html")
+		self.render("students.html")
 
 class workshopHandler(Handler):
 	def get(self):
-		self.render("infra.html")
+		self.render("workshop.html")
 
 class fvHandler(Handler):
 	def get(self):
-		self.render("infra.html")
+		self.render("fv.html")
 
 class eceaHandler(Handler):
 	def get(self):
-		self.render("infra.html")
+		self.render("ecea.html")
 
 class placementsHandler(Handler):
 	def get(self):
-		self.render("infra.html")
+		self.render("placements.html")
 
 class contactHandler(Handler):
 	def get(self):
-		self.render("infra.html")
+		self.render("contact.html")
 
 class forumHandler(Handler):
 	def get(self):
-		self.render("infra.html")
+		self.render("forum.html")
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),('/infra',infraHandler),('/ug',UGHandler,),('/pg',PGHandler),('/part',partHandler),
