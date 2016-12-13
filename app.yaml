@@ -12,8 +12,8 @@ handlers:
 - url: /fonts
   static_dir: fonts
 - url: /favicon.ico
-  static_files: favicon.ico
-  upload: favicon.ico
+  static_files: favicon.png
+  upload: favicon.png
 - url: /.*
   script: templates.app
 
