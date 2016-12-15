@@ -1,11 +1,11 @@
 import webapp2
 import jinja2
 import os
-import db
+from google.appengine.ext import db
 from user import *
 
 staff_list = [{"user":"muttan", "pass":"ina103"},{"user":"meenakshi", "pass":"mcp23008"}]
-def db_init:
+def db_init():
 	for staff in staff_list:
 		username = staff["user"]
 		password = staff["pass"]
@@ -116,5 +116,5 @@ app = webapp2.WSGIApplication([
     ('/', MainPage),('/infra',infraHandler),('/ug',UGHandler,),('/pg',PGHandler),('/part',partHandler),('/research',researchHandler),
     ('/staff',staffHandler),('/nstaff',nStaffHandler),('/students',studentsHandler),('/workshop',workshopHandler),
     ('/fv',fvHandler),('/ecea',eceaHandler),('/placements',placementsHandler),('/contact',contactHandler),('/forum',forumHandler),
-    ('staff-signup',staffSignupHandler),('/staff-login',staffLoginHandler)
+    ('/staff-login',staffLoginHandler)
 ], debug=True)
