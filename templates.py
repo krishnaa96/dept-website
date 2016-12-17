@@ -1,17 +1,28 @@
 import webapp2
 import jinja2
+import time
 import os
 from google.appengine.ext import db
+from google.appengine.api import memcache
 from user import *
 
-staff_list = [{"user":"muttan", "pass":"ina103"},{"user":"meenakshi", "pass":"mcp23008"}]
-def db_init():
-	for staff in staff_list:
-		username = staff["user"]
-		password = staff["pass"]
-		hash_pw = make_pw_hash(username, password)
-		a = users(username = username, password = hash_pw)
-		a.put()
+desig = {1:"Professor", 2:"Associate Professor", 3:"Assistant Professor Sr.Gr", 4:"Assistent Professor", 5:"Teaching Fellow"}
+
+def top_staff(update = False):
+	key = "top"
+	staffs = memcache.get(key)
+	if staffs is None or update:
+		staffs = db.GqlQuery("SELECT * FROM staff ORDER BY des ASC")
+		staffs = list(staffs)
+		memcache.set(key,staffs)
+	return staffs
+
+class staff(db.Model):
+	staff_id = db.StringProperty(required = True)
+	name = db.StringProperty(required = True)
+	des = db.IntegerProperty(required = True)
+	designation = db.StringProperty(required = True)
+	created = db.DateTimeProperty(auto_now_add = True)
 
 class users(db.Model):
 	username = db.StringProperty(required = True)
@@ -112,9 +123,78 @@ class staffLoginHandler(Handler):
 					self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/'%cookie_user_id)
 					self.redirect('/')
 
+class adminLoginHandler(Handler):
+	def render_front(self):
+		self.render("admin_login.html")
+	def get(self):
+		self.render_front()
+	def post(self):
+		password = self.request.get("password")
+		pass_word = valid_password(password)
+		if pass_word and password == "darthvader":
+			cookie_user_id = make_secure_val("krishna")
+			self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/'%cookie_user_id)
+			self.redirect("/admin")
+		else:
+			self.render_front()
+
+class adminHandler(Handler):
+	def get(self):
+		cookie_id = self.request.cookies.get("user_id")
+		if cookie_id:
+			id = check_secure_val(cookie_id)
+			if id and id == "krishna":
+				staffs = top_staff()
+				self.render("admin.html", staffs = staffs)
+			else:
+				self.redirect('/admin-login')
+		else:
+			self.redirect('/admin-login')
+	def post(self):
+		name = self.request.get("name")
+		des = self.request.get("des")
+		staff_id = self.request.get("staffid")
+		dele = self.request.get("del")
+		if name and des and staff_id:
+			a = staff(staff_id = staff_id, name = name, des = int(des), designation = desig[int(des)])
+			a.put()
+			time.sleep(2)
+			staffs = top_staff(update = True)
+			self.render("admin.html",staffs = staffs)
+		elif dele:
+			a = db.GqlQuery("SELECT * FROM staff where staff_id='%s'"%dele)
+			a = a.get()
+			a.delete()
+			time.sleep(2)
+			staffs = top_staff(update = True)
+			self.render("admin.html",staffs = staffs)
+
+class editPageHandler(Handler):
+	def get(self,id):
+		a = db.GqlQuery("SELECT * FROM staff WHERE staff_id='%s'"%id)
+		a = a.get()
+		self.render("edit_page.html",staff = a)
+	def post(self,id):
+		name = self.request.get("name")
+		des = self.request.get("des")
+		staff_id = self.request.get("staffid")
+		if name and des and staff_id:
+			b = db.GqlQuery("SELECT * FROM staff WHERE staff_id='%s'"%id)
+			b = b.get()
+			b.delete()
+			time.sleep(2)
+			a = staff(staff_id = staff_id, name = name, des = int(des), designation = desig[int(des)])
+			a.put()
+			time.sleep(2)
+			staffs = top_staff(update = True)
+			self.redirect('/admin')
+
+
+
+
 app = webapp2.WSGIApplication([
     ('/', MainPage),('/infra',infraHandler),('/ug',UGHandler,),('/pg',PGHandler),('/part',partHandler),('/research',researchHandler),
     ('/staff',staffHandler),('/nstaff',nStaffHandler),('/students',studentsHandler),('/workshop',workshopHandler),
     ('/fv',fvHandler),('/ecea',eceaHandler),('/placements',placementsHandler),('/contact',contactHandler),('/forum',forumHandler),
-    ('/staff-login',staffLoginHandler)
+    ('/staff-login',staffLoginHandler),('/admin-login',adminLoginHandler),('/admin',adminHandler),('/admin-(\d+)',editPageHandler)
 ], debug=True)

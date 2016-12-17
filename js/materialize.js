@@ -453,6 +453,7 @@ if ($) {
     $('.dropdown-button').dropdown(); // Displays dropdown with edge aligned to the left of button);
     $('.carousel').carousel();
     $('.slider').slider();
+    $('select').material_select();
   });
 }( jQuery ));;(function ($) {
 
