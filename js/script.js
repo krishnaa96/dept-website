@@ -1,5 +1,5 @@
 document.getElementById("header-placeholder").innerHTML = 
-`<div class="row valign-wrapper">
+`<div id="name_logo" class="row">
 	<div class="col m2 hide-on-small-only"> 
 		<div class="right">
 			<img class="responsive-img" src="images/CEG_logo.png" width="100" height="100" alt="CEG logo">
@@ -15,6 +15,7 @@ document.getElementById("header-placeholder").innerHTML =
 </div>
 <div class="divider"></div>
 <div class="row">
+	<div id="nav_bar">
 	<nav class="z-depth-0">
 		<div class="nav-wrapper">
 			<a class="brand-logo left" href="/" class="left"><i class="material-icons">home</i></a>
@@ -86,6 +87,26 @@ document.getElementById("header-placeholder").innerHTML =
 			</ul>
 		</div>
 	</nav>
-	<div class="divider"></div>
+	</div>
+	<div id="gap" style="display:none; height:64px; width:100%">
+	</div>
 </div>
 <br>`;
+
+$(document).ready(function() {
+  var result = $("#name_logo").height();
+  $(window).scroll(function () {
+      //if you hard code, then use console
+      //.log to determine when you want the 
+      //nav bar to stick.  
+      console.log($(window).scrollTop())
+    if ($(window).scrollTop() > result) {
+      $('#nav_bar').addClass('navbar-fixed-top');
+      $('#gap').css("display","block")
+    }
+    if ($(window).scrollTop() < (result + 1)) {
+      $('#nav_bar').removeClass('navbar-fixed-top');
+      $('#gap').css("display","none")
+    }
+  });
+});

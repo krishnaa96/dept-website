@@ -23,12 +23,9 @@ class staff(db.Model):
 	des = db.IntegerProperty(required = True)
 	designation = db.StringProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
-
-class users(db.Model):
-	username = db.StringProperty(required = True)
-	password = db.StringProperty(required = True)
-	created = db.DateTimeProperty(auto_now_add = True)
-
+	email = db.StringProperty(required = True)
+	spec = db.TextProperty(required = True)
+	photo = db.BlobProperty()
 
 template_dir = os.path.join(os.path.dirname(__file__),'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),autoescape=True)
@@ -64,7 +61,8 @@ class partHandler(Handler):
 
 class staffHandler(Handler):
 	def get(self):
-		self.render("staff.html")
+		staffs = top_staff()
+		self.render("staff.html", staffs = staffs)
 
 class nStaffHandler(Handler):
 	def get(self):
@@ -107,21 +105,7 @@ class staffLoginHandler(Handler):
 		self.render("staff_login.html",username = username, password = password)
 	def get(self):
 		self.render_front()
-	def post(self):
-		username = self.request.get("username")
-		password = self.request.get("password")
-		user_name = valid_username(username)
-		pass_word = valid_password(password)
-		if user_name and pass_word:
-			a = db.GqlQuery("SELECT * FROM users WHERE username='%s'"%username)
-			user = a.get()
-			if user:
-				valid = valid_pw(username, password, user.password)
-				if valid:
-					id = user.key().id()
-					cookie_user_id = make_secure_val(str(id))
-					self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/'%cookie_user_id)
-					self.redirect('/')
+		
 
 class adminLoginHandler(Handler):
 	def render_front(self):
@@ -154,9 +138,12 @@ class adminHandler(Handler):
 		name = self.request.get("name")
 		des = self.request.get("des")
 		staff_id = self.request.get("staffid")
+		email = self.request.get("email")
+		spec = self.request.get("spec")
+		photo = self.request.get("photo")
 		dele = self.request.get("del")
-		if name and des and staff_id:
-			a = staff(staff_id = staff_id, name = name, des = int(des), designation = desig[int(des)])
+		if name and des and staff_id and email and spec:
+			a = staff(staff_id = staff_id, name = name, des = int(des), designation = desig[int(des)], email = email, spec = spec, photo = photo)
 			a.put()
 			time.sleep(2)
 			staffs = top_staff(update = True)
@@ -168,6 +155,8 @@ class adminHandler(Handler):
 			time.sleep(2)
 			staffs = top_staff(update = True)
 			self.render("admin.html",staffs = staffs)
+		else:
+			self.redirect('/admin')
 
 class editPageHandler(Handler):
 	def get(self,id):
@@ -178,23 +167,36 @@ class editPageHandler(Handler):
 		name = self.request.get("name")
 		des = self.request.get("des")
 		staff_id = self.request.get("staffid")
-		if name and des and staff_id:
+		email = self.request.get("email")
+		spec = self.request.get("spec")
+		if name and des and staff_id and email and spec:
 			b = db.GqlQuery("SELECT * FROM staff WHERE staff_id='%s'"%id)
 			b = b.get()
 			b.delete()
 			time.sleep(2)
-			a = staff(staff_id = staff_id, name = name, des = int(des), designation = desig[int(des)])
+			a = staff(staff_id = staff_id, name = name, des = int(des), designation = desig[int(des)], email = email, spec = spec)
 			a.put()
 			time.sleep(2)
 			staffs = top_staff(update = True)
 			self.redirect('/admin')
+		else:
+			self.render("edit_page.html",staff = None)
 
-
+class Image(webapp2.RequestHandler):
+    def get(self):
+    	id = self.request.get('img_id')
+        s = staff.get_by_id(int(id))
+        if s.photo:
+            self.response.headers['Content-Type'] = 'image/png'
+            self.response.out.write(s.photo)
+        else:
+            self.response.out.write('No image')
 
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),('/infra',infraHandler),('/ug',UGHandler,),('/pg',PGHandler),('/part',partHandler),('/research',researchHandler),
     ('/staff',staffHandler),('/nstaff',nStaffHandler),('/students',studentsHandler),('/workshop',workshopHandler),
     ('/fv',fvHandler),('/ecea',eceaHandler),('/placements',placementsHandler),('/contact',contactHandler),('/forum',forumHandler),
-    ('/staff-login',staffLoginHandler),('/admin-login',adminLoginHandler),('/admin',adminHandler),('/admin-(\d+)',editPageHandler)
+    ('/staff-login',staffLoginHandler),('/admin-login',adminLoginHandler),('/admin',adminHandler),('/admin-(\d+)',editPageHandler),
+    ('/img',Image)
 ], debug=True)

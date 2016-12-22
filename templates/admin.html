@@ -18,7 +18,7 @@
 					<div class="container">
 	    				<div class="row">
 	    					<div class="col s1"></div>
-	    					<form class="col s10" method="post">
+	    					<form class="col s10" method="post" enctype="multipart/form-data">
 	    						<div class="row valign-wrapper">
 									<div class="input-field col s12">
 	    								<input type="text" name="staffid" id="staff_id" class="validate">
@@ -44,6 +44,23 @@
 									    <label>Designation</label>
 									</div>
 	    						</div>
+	    						<div class="row valign-wrapper">
+									<div class="input-field col s12">
+	    								<input type="text" name="email" id="text_email" class="validate">
+	    								<label for="text_email">Email ID</label>
+	   								</div>
+	   							</div>
+	   							<div class="row valign-wrapper">
+									<div class="input-field col s12">
+	    								<textarea id="textarea1" name="spec" class="materialize-textarea"></textarea>
+          								<label for="textarea1">Areas of Interest</label>
+	   								</div>
+	   							</div>
+	   							<div class="row valign-wrapper">
+	   								<div class="input-field col s12">
+	   									<input type="file" name="photo">
+	   								</div>
+	   							</div>
 	    						<div class="row valign-wrapper center-align">
 									<div class="input-field col s12">
     									<button class="btn" type="submit" name="action">Submit</button>
@@ -66,7 +83,7 @@
 	    								<th>Edit</th>
 	    								<th>Delete</th>
 	    							</tr>
-	    						</thead>
+	    						</thead>	
 	    						<tbody>
 	    							{% for staff in staffs %}
 	    								<tr>

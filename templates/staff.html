@@ -12,5 +12,41 @@
 	<body>
 		<div id="header-placeholder"></div>
 		<script type="text/javascript" src="js/script.js"></script>
+		<div class="container">
+			<div class="row">
+				{% for staff in staffs%}
+					<div class="col l4">
+						<div class="card">
+    						<div class="card-image waves-effect waves-block waves-light">
+      							<img class="activator" src="/img?img_id={{staff.key().id()}}">
+    						</div>
+    						<div class="card-content">
+      							<span class="card-title activator grey-text text-darken-4">{{staff.name}}</span>
+      							<p>{{staff.designation}}</p>
+    						</div>
+    						<div class="card-reveal">
+							    <span class="card-title grey-text text-darken-4">{{staff.name}}</span>
+							    <br>
+						    	<span>
+						    		<h5>Areas of Interest</h5>
+						    		<p>{{staff.spec}}</p>
+						    	</span>
+							</div>
+  						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+		<script type="text/javascript">
+			$(function() {
+   				$('.card').hover(
+        			function() {
+            			$(this).find('> .card-image > img.activator').click();
+        			}, function() {
+            			$(this).find('> .card-reveal > .card-title').click();
+        			}
+    			);
+			});
+		</script>
   	</body>
 </html>
