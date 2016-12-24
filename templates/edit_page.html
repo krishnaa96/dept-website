@@ -12,7 +12,7 @@
 			<h4 align="center">EDIT</h4>
 			<div class="row valign-wrapper">
 				<div class="col s3"></div>
-				<form class="col s6" method="post">
+				<form class="col s6" method="post" enctype="multipart/form-data">
 					<div class="row">
 						<div class="input-field col s12">
 							<input id="text_name" type="text" name="name" value="{{staff.name}}" class="validate">
@@ -28,7 +28,7 @@
 					<div class="row">
 	    				<div class="input-field col s12">
 						    <select name="des">
-						    	<option value="" disabled selected>Choose your option</option>
+						    	<option value="{{staff.des}}" selected>{{staff.designation}}</option>
 						    	<option value="1">Professor</option>
 						    	<option value="2">Associate Professor</option>
 						    	<option value="3">Assistent Professor Sr.Gr</option>
@@ -50,6 +50,11 @@
           					<label for="textarea1">Areas of Interest</label>
 						</div>
 					</div>
+					<div class="row valign-wrapper">
+	   					<div class="input-field col s12">
+	   						<input type="file" name="photo">
+	  					</div>
+	  				</div>
 					<div class="row valign-wrapper center-align">
 						<div class="input-field col s12">
     						<button class="btn" type="submit" name="action">Submit</button>

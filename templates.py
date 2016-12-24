@@ -143,7 +143,10 @@ class adminHandler(Handler):
 		photo = self.request.get("photo")
 		dele = self.request.get("del")
 		if name and des and staff_id and email and spec:
-			a = staff(staff_id = staff_id, name = name, des = int(des), designation = desig[int(des)], email = email, spec = spec, photo = photo)
+			if photo:
+				a = staff(staff_id = staff_id, name = name, des = int(des), designation = desig[int(des)], email = email, spec = spec, photo = photo)
+			else:
+				a = staff(staff_id = staff_id, name = name, des = int(des), designation = desig[int(des)], email = email, spec = spec)
 			a.put()
 			time.sleep(2)
 			staffs = top_staff(update = True)
@@ -169,28 +172,35 @@ class editPageHandler(Handler):
 		staff_id = self.request.get("staffid")
 		email = self.request.get("email")
 		spec = self.request.get("spec")
+		photo = self.request.get("photo")
 		if name and des and staff_id and email and spec:
 			b = db.GqlQuery("SELECT * FROM staff WHERE staff_id='%s'"%id)
 			b = b.get()
-			b.delete()
-			time.sleep(2)
-			a = staff(staff_id = staff_id, name = name, des = int(des), designation = desig[int(des)], email = email, spec = spec)
-			a.put()
+			b.name = name
+			b.des = int(des)
+			b.designation = desig[int(des)]
+			b.staff_id = staff_id
+			b.spec = b.spec
+			b.email = b.email
+			if photo:
+				b.photo = photo
+			b.put()
 			time.sleep(2)
 			staffs = top_staff(update = True)
 			self.redirect('/admin')
 		else:
-			self.render("edit_page.html",staff = None)
+			self.response.write()
+			#self.render("edit_page.html",staff = None)
 
 class Image(webapp2.RequestHandler):
     def get(self):
     	id = self.request.get('img_id')
-        s = staff.get_by_id(int(id))
-        if s.photo:
-            self.response.headers['Content-Type'] = 'image/png'
-            self.response.out.write(s.photo)
-        else:
-            self.response.out.write('No image')
+        st = top_staff()
+        for s in st:
+        	if id == s.staff_id:
+        		if s.photo:
+        			self.response.headers['Content-Type'] = 'image/png'
+        			self.response.out.write(s.photo)
 
 
 app = webapp2.WSGIApplication([
