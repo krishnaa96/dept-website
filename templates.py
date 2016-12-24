@@ -12,7 +12,7 @@ def top_staff(update = False):
 	key = "top"
 	staffs = memcache.get(key)
 	if staffs is None or update:
-		staffs = db.GqlQuery("SELECT * FROM staff ORDER BY des ASC")
+		staffs = db.GqlQuery("SELECT * FROM staff ORDER BY staff_id ASC")
 		staffs = list(staffs)
 		memcache.set(key,staffs)
 	return staffs
