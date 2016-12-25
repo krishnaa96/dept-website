@@ -6,7 +6,7 @@ from google.appengine.ext import db
 from google.appengine.api import memcache
 from user import *
 
-desig = {1:"Professor", 2:"Associate Professor", 3:"Assistant Professor Sr.Gr", 4:"Assistent Professor", 5:"Teaching Fellow"}
+desig = {1:"Professor", 2:"Associate Professor", 3:"Assistant Professor Sr.Gr", 4:"Assistant Professor", 5:"Teaching Fellow"}
 
 def top_staff(update = False):
 	key = "top"
@@ -180,8 +180,8 @@ class editPageHandler(Handler):
 			b.des = int(des)
 			b.designation = desig[int(des)]
 			b.staff_id = staff_id
-			b.spec = b.spec
-			b.email = b.email
+			b.spec = spec
+			b.email = email
 			if photo:
 				b.photo = photo
 			b.put()
